@@ -56,6 +56,9 @@ public:
     std::string toString(int col = -1)
     {
         std::string str = "";
+        if(col != -1) // Only print specific column
+            return z_line[col];
+            
         for(std::string word : z_line)
             str += word + ", ";
         str.pop_back();

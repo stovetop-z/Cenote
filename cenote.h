@@ -50,14 +50,18 @@ public:
             for(Line line : matrix)
                 str += line.toString();
         }
-        else if(row == -1 && col != -1)
+        if(row == -1 && col > -1) // Looking up specific column
         {
-            if(col > )
             for(Line line : matrix)
                 str += line.toString(col);
         }
+        if(row > -1 && col == -1) // Looking up specific row
+            str += matrix[row].toString();
+        if(row > -1 && col > -1) // Looking up row-col pair
+            str += matrix[row].toString(col);
         
         return str;
     }
+
 };
 #endif
