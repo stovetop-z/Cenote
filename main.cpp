@@ -14,7 +14,6 @@ int main()
     int col = -1;
     while(true)
     {
-
         cout << "Enter row: ";
         cin >> row;
         cout << "Enter col: ";

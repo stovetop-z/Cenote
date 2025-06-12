@@ -58,7 +58,7 @@ public:
         std::string str = "";
         if(col != -1) // Only print specific column
             return z_line[col];
-            
+
         for(std::string word : z_line)
             str += word + ", ";
         str.pop_back();
@@ -66,6 +66,24 @@ public:
         str += "\n";
         
         return str;
+    }
+
+    std::string operator[](int index)
+    {
+        if(index < 0 || index >= z_line.size())
+            throw std::out_of_range("Index out of range");
+        return z_line[index];
+    }
+
+    bool operator==(Line& line)
+    {
+        for(int i = 0; i < z_line.size(); i++)
+        {
+            if(z_line[i] != line[i])
+                return false;
+        }
+
+        return true;
     }
 };
 #endif

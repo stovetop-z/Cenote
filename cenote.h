@@ -4,15 +4,18 @@
 #include "line.h"
 #include <fstream>
 #include <tuple>
+#include "library/hash_map.h"
 
 class Cenote
 {
 private:
     std::vector<Line> matrix;
+    HashMap hash_map;
     int rows, cols;
 
 public:
-    Cenote() {}
+    Cenote() 
+    {    }
 
     std::tuple<bool, std::string> processFile(const std::string& f)
     {
@@ -33,6 +36,7 @@ public:
             if(num == 0) line.setHeader(true);
 
             matrix.push_back(line);
+            hash_map.stow(line.toString(), num);
             num++;
         }
 
@@ -42,9 +46,22 @@ public:
 
     std::tuple<bool, std::string> operator=(const std::string& f) { return processFile(f); }
 
-    std::string data(int row = -1, int col = -1)
+    /*
+    *   Flags:
+    *   - duplicates -> prints all the duplicates with their corresponding line numbers
+    *   - 
+    */
+    std::string data(int row = -1, int col = -1, const char* flag = "lambda") // Update this to search column by name and rows by values that are equal to, less than, or greater than
     {
+
         std::string str = "";
+        if(flag == "duplicates")
+        {
+            if(hash_map.duplicateScale() < 1) // No duplicates
+                return "No duplicates found...\n";
+            for(auto& dups : hash_map.duplicates()) // Print duplicates
+                str += std::to_string(::get<1>(dups)) + " - " + ::get<0>(dups);
+        }
         if(row == -1 && col == -1)
         {
             for(Line line : matrix)
@@ -63,5 +80,13 @@ public:
         return str;
     }
 
+    // I really want to try making my own SQL type database incase people want an integrate way of handling the data
+    int saveDB()
+    {
+        
+    }
+
+    // This would convert the self made database to sqllite so that people can export the database to another program easily
+    int convertToSQLLite();
 };
 #endif
