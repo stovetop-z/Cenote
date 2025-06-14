@@ -33,7 +33,7 @@ public:
         std::string word = "";
         for(char c : line)
         {
-            if(c == '\n' || c == ',') 
+            if(c == '\n' || c == ',' || c == '\r') 
             {
                 processed_line.push_back(word);
                 word = "";
@@ -55,6 +55,8 @@ public:
 
     std::string toString(int col = -1)
     {
+        if(z_line.empty()) throw "There is NO data in this row...\n";
+
         std::string str = "";
         if(col != -1) // Only print specific column
             return z_line[col];

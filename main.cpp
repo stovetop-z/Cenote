@@ -10,15 +10,21 @@ int main()
     Cenote cenote;
     cenote = f;
 
+    // cout << cenote.hashString();
+
     int row = -1;
     int col = -1;
     while(true)
     {
+        string flag;
         cout << "Enter row: ";
         cin >> row;
         cout << "Enter col: ";
         cin >> col;
-        cout << cenote.data(row, col) << endl;
+        cin.get();
+        cout << "Enter flag: ";
+        getline(cin, flag, '\n');
+        cout << cenote.data(row, col, flag) << endl;
     }
 
     return 0;

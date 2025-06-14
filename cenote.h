@@ -4,6 +4,7 @@
 #include "line.h"
 #include <fstream>
 #include <tuple>
+#include <algorithm>
 #include "library/hash_map.h"
 
 class Cenote
@@ -27,6 +28,10 @@ public:
         
         std::string l;
         int num = 0;
+        auto count = std::count_if(std::istreambuf_iterator<char>{csv}, {}, [](char c) { return c == '\n'; });
+        csv.close();
+        hash_map.rescale(count);
+        csv.open(f, std::ifstream::in);
         while(getline(csv, l))
         {
             Line line;
@@ -36,7 +41,8 @@ public:
             if(num == 0) line.setHeader(true);
 
             matrix.push_back(line);
-            hash_map.stow(line.toString(), num);
+            if(num > 0)
+                hash_map.stow(line.toString(), num);
             num++;
         }
 
@@ -51,16 +57,15 @@ public:
     *   - duplicates -> prints all the duplicates with their corresponding line numbers
     *   - 
     */
-    std::string data(int row = -1, int col = -1, const char* flag = "lambda") // Update this to search column by name and rows by values that are equal to, less than, or greater than
+    std::string data(int row = -1, int col = -1, std::string flag = "lambda") // Update this to search column by name and rows by values that are equal to, less than, or greater than
     {
 
         std::string str = "";
         if(flag == "duplicates")
         {
-            if(hash_map.duplicateScale() < 1) // No duplicates
-                return "No duplicates found...\n";
             for(auto& dups : hash_map.duplicates()) // Print duplicates
-                str += std::to_string(::get<1>(dups)) + " - " + ::get<0>(dups);
+                str += std::to_string(get<1>(dups)) + " - " + get<0>(dups);
+            return str;
         }
         if(row == -1 && col == -1)
         {
@@ -83,10 +88,16 @@ public:
     // I really want to try making my own SQL type database incase people want an integrate way of handling the data
     int saveDB()
     {
-        
+        return 1;
     }
 
     // This would convert the self made database to sqllite so that people can export the database to another program easily
     int convertToSQLLite();
+
+    // Test to see if hash map is reading properly
+    std::string hashString()
+    {
+        return hash_map.toString();
+    }
 };
 #endif

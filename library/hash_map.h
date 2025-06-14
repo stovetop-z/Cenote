@@ -25,7 +25,8 @@ private:
         const uint64_t FNV_prime = 1099511628211ULL;
         uint64_t hash = 14695981039346656037ULL; 
 
-        for (size_t i = 0; i < len; ++i) {
+        for (size_t i = 0; i < len; ++i) 
+        {
             hash ^= static_cast<uint8_t>(data[i]);
             hash *= FNV_prime;
         }
@@ -55,10 +56,11 @@ public:
     void stow(std::string key, int val)
     {
         const char* data = key.c_str();
-        size_t hash = fnv1a_64(data, key.length());
+        int hash = fnv1a_64(data, key.length()) % size_of;
 
         Node node; node(key, val);
         table[hash].push_back(node);
+
         if(table[hash].size() > 1) num_duplicates++; // Duplicate added
     }
 
@@ -71,10 +73,28 @@ public:
         std::vector<std::tuple<std::string, int>> dups;
         for(auto& hash : table)
             if(hash.size() > 1)
-                for(auto& node : hash)
-                    dups.push_back({node.key, node.value});
+            {
+                for(int i = 0; i < hash.size(); i++)
+                    for(int j = i + 1; j < hash.size(); j++)
+                        if(hash[i].key == hash[j].key)
+                        {
+                            dups.push_back({hash[i].key, hash[i].value});
+                            dups.push_back({hash[j].key, hash[j].value});
+                        }
+            }
 
         return dups;
+    }
+
+    std::string toString()
+    {
+        std::string str = "";
+
+        for(auto& t : table)
+            for(auto& n : t)
+                str += std::to_string(n.value) + " " + n.key + '\n';
+        
+        return str;
     }
 };
 #endif
