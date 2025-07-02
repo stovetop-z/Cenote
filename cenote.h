@@ -6,6 +6,7 @@
 #include <tuple>
 #include <algorithm>
 #include "library/hash_map.h"
+#include "library/translator.h"
 
 class Cenote
 {
@@ -13,6 +14,80 @@ private:
     std::vector<Line> matrix;
     HashMap hash_map;
     int rows, cols;
+    void lower(std::string& str) {for(char& c : str) std::tolower(c);}
+    bool isNumeric(const std::string& str) {return (str[0] == '0' || str[0] == '1' || str[0] == '2' || str[0] == '3' || str[0] == '4' || str[0] == '5' || str[0] == '6' || str[0] == '7' || str[0] == '8' || str[0] == '9') ? true : false;}
+
+    bool isValid(std::string line, std::string ind)
+    {
+        int index = -1;
+        if(line == "row")
+        {
+            if(isNumeric(ind))
+            {
+                index = std::stoi(ind);
+                if(index > matrix.size() || index < 0) return false;
+            }
+        }
+        if(line == "col")
+        {
+            if(isNumeric(ind))
+            {
+                index = std::stoi(ind);
+                if(index > matrix[0].getLine().size() || index < 0) return false;
+            }
+        }
+        
+        return true;
+    }
+
+    std::string show(std::vector<std::string> command)
+    {
+        int r = -1;
+        int c = -1;
+        for(size_t i = 0; i < command.size(); i++)
+        {
+            auto word = command[i];
+            if(word == "duplicates")
+            {
+                std::string str = "";
+                for(auto& dups : hash_map.duplicates()) // Print duplicates
+                    str += std::to_string(get<1>(dups)) + " - " + get<0>(dups);
+                return str;
+            }
+            if(word == "row")
+            {
+                i++;
+                std::string row = command[i];
+                if(isNumeric(row)) // Looking up specific row
+                    r = std::stoi(row);
+            }
+            if(word == "col")
+            {
+                i++;
+                std::string col = command[i];
+                if(isNumeric(col)) // Looking up specific row
+                  c = std::stoi(col);
+            }
+        }
+
+        std::string str = "";
+        if(r == -1 && c == -1)
+        {
+            for(Line line : matrix)
+                str += line.toString();
+        }
+        if(r == -1 && c > -1) // Looking up specific column
+        {
+            for(Line line : matrix)
+                str += line.toString(c);
+        }
+        if(r > -1 && c == -1) // Looking up specific r
+            str += matrix[r].toString();
+        if(r > -1 && c > -1) // Looking up r-col pair
+            str += matrix[r].toString(c);
+        
+            return str;
+    }
 
 public:
     Cenote() 
@@ -57,34 +132,31 @@ public:
     *   - duplicates -> prints all the duplicates with their corresponding line numbers
     *   - 
     */
-    std::string data(int row = -1, int col = -1, std::string flag = "lambda") // Update this to search column by name and rows by values that are equal to, less than, or greater than
+    std::string processCommand(std::string cmd) // command processor
     {
+        lower(cmd);
+        Translator t;
+        std::pair<std::vector<std::string>, std::string> interpreter = t.interpret(cmd);
+        std::vector<std::string> command;
+        if(interpreter.second == "Valid") command = interpreter.first;
+        else return interpreter.second;
 
-        std::string str = "";
-        if(flag == "duplicates")
+        if(command[0] == "show")
         {
-            for(auto& dups : hash_map.duplicates()) // Print duplicates
-                str += std::to_string(get<1>(dups)) + " - " + get<0>(dups);
-            return str;
+            // Pop front
+            command.erase(command.begin());
+            return show(command);
         }
-        if(row == -1 && col == -1)
+        if(command[0] == "del")
         {
-            for(Line line : matrix)
-                str += line.toString();
+            
         }
-        if(row == -1 && col > -1) // Looking up specific column
-        {
-            for(Line line : matrix)
-                str += line.toString(col);
-        }
-        if(row > -1 && col == -1) // Looking up specific row
-            str += matrix[row].toString();
-        if(row > -1 && col > -1) // Looking up row-col pair
-            str += matrix[row].toString(col);
         
-        return str;
+        
+        return "Try again...";
     }
 
+    
     // I really want to try making my own SQL type database incase people want an integrate way of handling the data
     int saveDB()
     {

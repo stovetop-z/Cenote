@@ -5,7 +5,7 @@ A Comma-Separated File (*CSV*) file reader written in C++. My attempt to create 
 ## Special Features
 I love working with *Pandas* due to its diverse capabilities. However, as an aspiring data scientist, there are certain aspects of the data manipulation/exploring process that were more streamlined and intuitive. *Cenote* uses easy terms and makes assumptions that mitigate errors when working with data; while still offering the flexibility of being precise. This is a work in progress, but here are some features I hope to add:
 - Merge two *Cenote* dataframes
-- Delete duplicates
+- Delete duplicates - **DONE**
 - Check for **null** values
 - Perform vector and matrix operations where applicable
 - Convert data to an *SQL* database
