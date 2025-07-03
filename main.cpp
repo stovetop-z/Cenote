@@ -29,7 +29,7 @@ int main()
     while(true)
     {
         string str;
-        cout << "User: ";
+        cout << "Input: ";
         getline(cin, str, '\n');
         cout << cenote.processCommand(str) << endl;
     }

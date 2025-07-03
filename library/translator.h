@@ -32,8 +32,6 @@ private:
 
     std::string parser()
     {
-        int ind = 0;
-
         std::string exp = "";
         for(auto& word : lexed)
         {
